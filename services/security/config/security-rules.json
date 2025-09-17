@@ -1,0 +1,297 @@
+{
+  "network_acl_rules": {
+    "default": {
+      "ingress": [
+        {
+          "rule_no": 100,
+          "action": "allow",
+          "from_port": 0,
+          "to_port": 0,
+          "protocol": "-1",
+          "cidr_block": "VPC_CIDR",
+          "description": "Allow VPC internal traffic only"
+        }
+      ],
+      "egress": [
+        {
+          "rule_no": 100,
+          "action": "allow",
+          "from_port": 0,
+          "to_port": 0,
+          "protocol": "-1",
+          "cidr_block": "VPC_CIDR",
+          "description": "Allow VPC internal traffic only"
+        }
+      ]
+    },
+    "public": {
+      "inbound": [
+        {
+          "rule_number": 100,
+          "rule_action": "allow",
+          "from_port": 80,
+          "to_port": 80,
+          "protocol": "tcp",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow HTTP from internet"
+        },
+        {
+          "rule_number": 110,
+          "rule_action": "allow",
+          "from_port": 443,
+          "to_port": 443,
+          "protocol": "tcp",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow HTTPS from internet"
+        },
+        {
+          "rule_number": 120,
+          "rule_action": "allow",
+          "from_port": 22,
+          "to_port": 22,
+          "protocol": "tcp",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow SSH (configure for security)"
+        },
+        {
+          "rule_number": 130,
+          "rule_action": "allow",
+          "from_port": 1024,
+          "to_port": 65535,
+          "protocol": "tcp",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow ephemeral ports for return traffic"
+        }
+      ],
+      "outbound": [
+        {
+          "rule_number": 100,
+          "rule_action": "allow",
+          "from_port": 0,
+          "to_port": 0,
+          "protocol": "-1",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow all outbound traffic"
+        }
+      ]
+    },
+    "private": {
+      "inbound": [
+        {
+          "rule_number": 110,
+          "rule_action": "allow",
+          "from_port": 443,
+          "to_port": 443,
+          "protocol": "tcp",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow HTTPS from internet for VPC endpoints"
+        },
+        {
+          "rule_number": 120,
+          "rule_action": "allow",
+          "from_port": 1024,
+          "to_port": 65535,
+          "protocol": "tcp",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow ephemeral ports for return traffic"
+        }
+      ],
+      "outbound": [
+        {
+          "rule_number": 110,
+          "rule_action": "allow",
+          "from_port": 443,
+          "to_port": 443,
+          "protocol": "tcp",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow HTTPS to internet for VPC endpoints"
+        },
+        {
+          "rule_number": 120,
+          "rule_action": "allow",
+          "from_port": 80,
+          "to_port": 80,
+          "protocol": "tcp",
+          "cidr_block": "0.0.0.0/0",
+          "description": "Allow HTTP to internet for package downloads"
+        }
+      ]
+    }
+  },
+  "database_nacl": {
+    "inbound": [
+      {
+        "rule_number": 100,
+        "rule_action": "allow",
+        "from_port": 3306,
+        "to_port": 3306,
+        "protocol": "tcp",
+        "cidr_block": "VPC_CIDR",
+        "description": "Allow MySQL/Aurora from VPC"
+      },
+      {
+        "rule_number": 110,
+        "rule_action": "allow",
+        "from_port": 5432,
+        "to_port": 5432,
+        "protocol": "tcp",
+        "cidr_block": "VPC_CIDR",
+        "description": "Allow PostgreSQL from VPC"
+      },
+      {
+        "rule_number": 120,
+        "rule_action": "allow",
+        "from_port": 1024,
+        "to_port": 65535,
+        "protocol": "tcp",
+        "cidr_block": "0.0.0.0/0",
+        "description": "Allow ephemeral ports for return traffic"
+      }
+    ],
+    "outbound": [
+      {
+        "rule_number": 100,
+        "rule_action": "allow",
+        "from_port": 0,
+        "to_port": 0,
+        "protocol": "-1",
+        "cidr_block": "0.0.0.0/0",
+        "description": "Allow all outbound traffic"
+      }
+    ]
+  },
+  "security_groups": {
+    "alb": {
+      "description": "Security group for Application Load Balancers",
+      "ingress": [
+        {
+          "description": "HTTP from internet",
+          "from_port": 80,
+          "to_port": 80,
+          "protocol": "tcp",
+          "cidr_blocks": ["0.0.0.0/0"]
+        },
+        {
+          "description": "HTTPS from internet",
+          "from_port": 443,
+          "to_port": 443,
+          "protocol": "tcp",
+          "cidr_blocks": ["0.0.0.0/0"]
+        }
+      ],
+      "egress": [
+        {
+          "description": "All outbound traffic",
+          "from_port": 0,
+          "to_port": 0,
+          "protocol": "-1",
+          "cidr_blocks": ["0.0.0.0/0"]
+        }
+      ]
+    },
+    "eks_nodes": {
+      "description": "Security group for EKS worker nodes",
+      "ingress": [
+        {
+          "description": "Traffic from ALB",
+          "from_port": 0,
+          "to_port": 65535,
+          "protocol": "tcp",
+          "source_security_group": "alb"
+        },
+        {
+          "description": "All traffic from VPC",
+          "from_port": 0,
+          "to_port": 0,
+          "protocol": "-1",
+          "cidr_blocks": ["VPC_CIDR"]
+        }
+      ],
+      "egress": [
+        {
+          "description": "All outbound traffic",
+          "from_port": 0,
+          "to_port": 0,
+          "protocol": "-1",
+          "cidr_blocks": ["0.0.0.0/0"]
+        }
+      ]
+    },
+    "bastion": {
+      "description": "Security group for bastion host",
+      "ingress": [
+        {
+          "description": "SSH from trusted IPs",
+          "from_port": 22,
+          "to_port": 22,
+          "protocol": "tcp",
+          "cidr_blocks": ["0.0.0.0/0"]
+        }
+      ],
+      "egress": [
+        {
+          "description": "All outbound traffic",
+          "from_port": 0,
+          "to_port": 0,
+          "protocol": "-1",
+          "cidr_blocks": ["0.0.0.0/0"]
+        }
+      ]
+    },
+    "database": {
+      "description": "Security group for RDS databases",
+      "ingress": [
+        {
+          "description": "MySQL/Aurora from EKS nodes",
+          "from_port": 3306,
+          "to_port": 3306,
+          "protocol": "tcp",
+          "source_security_group": "eks_nodes"
+        },
+        {
+          "description": "PostgreSQL from EKS nodes",
+          "from_port": 5432,
+          "to_port": 5432,
+          "protocol": "tcp",
+          "source_security_group": "eks_nodes"
+        },
+        {
+          "description": "Database access from bastion",
+          "from_port": 3306,
+          "to_port": 3306,
+          "protocol": "tcp",
+          "source_security_group": "bastion"
+        },
+        {
+          "description": "PostgreSQL from bastion",
+          "from_port": 5432,
+          "to_port": 5432,
+          "protocol": "tcp",
+          "source_security_group": "bastion"
+        }
+      ],
+      "egress": []
+    },
+    "vpc_endpoints": {
+      "description": "Security group for VPC endpoints",
+      "ingress": [
+        {
+          "description": "HTTPS from private subnets",
+          "from_port": 443,
+          "to_port": 443,
+          "protocol": "tcp",
+          "cidr_blocks": ["VPC_CIDR"]
+        }
+      ],
+      "egress": [
+        {
+          "description": "All outbound traffic",
+          "from_port": 0,
+          "to_port": 0,
+          "protocol": "-1",
+          "cidr_blocks": ["0.0.0.0/0"]
+        }
+      ]
+    }
+  }
+}
