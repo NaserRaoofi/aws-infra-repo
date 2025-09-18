@@ -58,3 +58,21 @@ output "database_subnet_group_name" {
   value       = module.networking.database_subnet_group_name
 }
 
+################################################################################
+# EKS Outputs (including ALB Controller)
+################################################################################
+
+output "eks_cluster_name" {
+  description = "EKS cluster name"
+  value       = module.eks.cluster_name
+}
+
+output "eks_cluster_endpoint" {
+  description = "EKS cluster endpoint"
+  value       = module.eks.cluster_endpoint
+}
+
+output "alb_controller_role_arn" {
+  description = "ALB Controller IAM role ARN (from EKS module)"
+  value       = module.eks.alb_controller_role_arn
+}

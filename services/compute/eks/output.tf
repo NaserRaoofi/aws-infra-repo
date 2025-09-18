@@ -41,3 +41,32 @@ output "eks_managed_node_groups" {
 	description = "Map of EKS managed node groups"
 	value       = module.eks.eks_managed_node_groups
 }
+
+################################################################################
+# ALB Controller IAM Role Outputs
+################################################################################
+
+output "alb_controller_role_arn" {
+	description = "ALB Controller IAM role ARN"
+	value       = module.alb_controller_role.alb_controller_role_arn
+}
+
+output "alb_controller_role_name" {
+	description = "ALB Controller IAM role name"
+	value       = module.alb_controller_role.alb_controller_role_name
+}
+
+output "alb_controller_policy_arn" {
+	description = "ALB Controller IAM policy ARN"
+	value       = module.alb_controller_role.alb_controller_policy_arn
+}
+
+output "service_account_namespace" {
+	description = "ALB Controller service account namespace"
+	value       = module.alb_controller_role.service_account_namespace
+}
+
+output "service_account_name" {
+	description = "ALB Controller service account name"
+	value       = module.alb_controller_role.service_account_name
+}

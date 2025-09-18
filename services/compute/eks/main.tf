@@ -127,3 +127,25 @@ eks_managed_node_groups = {
 	}
 }
 }
+
+################################################################################
+# ALB Controller IAM Role (EKS-related security)
+################################################################################
+
+module "alb_controller_role" {
+  source = "../../security/iam-roles"
+
+  # Environment configuration
+  environment  = var.environment
+  project_name = var.project_name
+
+  # EKS cluster configuration
+  cluster_name = module.eks.cluster_name
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
+  # Service account configuration
+  service_account_namespace = "aws-load-balancer-system"
+  service_account_name      = "aws-load-balancer-controller"
+
+  tags = var.common_tags
+}
