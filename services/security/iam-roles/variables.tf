@@ -1,11 +1,5 @@
 # Variables for ALB Controller IAM Role
 
-variable "cluster_name" {
-  description = "Name of the EKS cluster"
-  type        = string
-  default     = "my-project-dev"
-}
-
 variable "environment" {
   description = "Environment name (e.g., dev, staging, prod)"
   type        = string

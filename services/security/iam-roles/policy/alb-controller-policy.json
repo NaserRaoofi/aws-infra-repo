@@ -199,6 +199,11 @@
         "elasticloadbalancing:ModifyRule"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["elasticloadbalancing:AddTags", "elasticloadbalancing:RemoveTags"],
+      "Resource": "*"
     }
   ]
 }

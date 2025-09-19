@@ -140,7 +140,6 @@ module "alb_controller_role" {
   project_name = var.project_name
 
   # EKS cluster configuration
-  cluster_name = module.eks.cluster_name
   oidc_provider_arn = module.eks.oidc_provider_arn
 
   # Service account configuration

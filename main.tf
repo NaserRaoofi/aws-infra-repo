@@ -87,7 +87,7 @@ module "eks" {
   # Cluster settings
   cluster_version        = "1.33"
   enable_irsa            = true
-  endpoint_public_access = false # Private-only cluster API (admin via SSM/VPN/DirectConnect)
+  endpoint_public_access = true  # Enable both public and private access
   enabled_log_types      = []
 
   # Addons (can be overridden at call site)

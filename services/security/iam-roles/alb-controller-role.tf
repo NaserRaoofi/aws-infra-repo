@@ -4,11 +4,6 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-# Data source for the EKS cluster OIDC issuer URL
-data "aws_eks_cluster" "cluster" {
-  name = var.cluster_name
-}
-
 # IAM policy document for the trust relationship
 data "aws_iam_policy_document" "alb_controller_assume_role_policy" {
   statement {
@@ -17,13 +12,13 @@ data "aws_iam_policy_document" "alb_controller_assume_role_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "${replace(data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:sub"
+      variable = "${replace(var.oidc_provider_arn, "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/", "")}:sub"
       values   = ["system:serviceaccount:${var.service_account_namespace}:${var.service_account_name}"]
     }
 
     condition {
       test     = "StringEquals"
-      variable = "${replace(data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:aud"
+      variable = "${replace(var.oidc_provider_arn, "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/", "")}:aud"
       values   = ["sts.amazonaws.com"]
     }
 
